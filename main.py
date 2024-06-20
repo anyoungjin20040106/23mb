@@ -59,6 +59,10 @@ async def delete(request: Request,stnum:str=Form(...)):
     df=df[(df['학번']==int(stnum))]
     if len(df)==0:
         return templates.TemplateResponse('warning.html',{'request':request,'msg':'해당 학번이 존재하지 않습니다'})
+    if 2355009 in df['학번'].values:
+        return templates.TemplateResponse('warning.html',{'request':request,'msg':'대표학생은 삭제할수 없습니다'})
+    if 2357040 in df['학번'].values:
+        return templates.TemplateResponse('warning.html',{'request':request,'msg':'부대표학생은 삭제할수 없습니다'})
     form = {'mode': 'delete', 'stnum': stnum}
     try:   
         async with httpx.AsyncClient() as client:
@@ -83,6 +87,10 @@ async def updateinput(request: Request,stnum:str=Form(...)):
     df=pd.read_excel(sheet)
     df=df[df['학번']==stnum]
     df.fillna("",inplace=True)
+    if 2355009 in df['학번'].values:
+        return templates.TemplateResponse('warning.html',{'request':request,'msg':'대표학생의 정보는 수정할수 없습니다'})
+    if 2357040 in df['학번'].values:
+        return templates.TemplateResponse('warning.html',{'request':request,'msg':'부대표학생의 정보는 수정할수 없습니다'})
     if len(df)<1:
         return templates.TemplateResponse('warning.html',{'request':request,'msg':'해당 학번이 존재하지 않습니다'})
     df.set_index('학번',inplace=True)
