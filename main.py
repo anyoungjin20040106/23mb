@@ -1,13 +1,24 @@
-from fastapi import FastAPI,Form,Request
+from fastapi import FastAPI,Form,Request, Depends
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse,HTMLResponse
+from fastapi.responses import FileResponse
 from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
+from typing import Optional
 import pandas as pd
 import re
 import os
 import httpx
 import html
+class StudentInfo(BaseModel):
+    stnum: str
+    name: str
+    grade: int
+    ph: str
+    notes: Optional[str]
 
+    @classmethod
+    def as_form(cls, stnum: str = Form(...), name: str = Form(...), grade: int = Form(...), ph: str = Form(...), notes: Optional[str] = Form(None)):
+        return cls(stnum=stnum, name=name, grade=grade, ph=ph, notes=notes)
 pattern='^2(3|4)5(5|7)\d{3}$'
 sheet=os.getenv('KGCmember')
 programe=os.getenv('KGCPrograme')
@@ -25,12 +36,14 @@ def insertform():
 def getinsert(request: Request):
     return templates.TemplateResponse('warning.html',{'request':request,'msg':'정보를 입력해주세요'})
 @app.post("/insert")
-async def insert(request: Request,stnum:str=Form(...),name:str=Form(...),grade:int=Form(...),ph:str=Form(...),notes:str=Form(None)):
-    form = {'mode': 'insert', 'stnum': stnum, "name": name, "grade": grade, "ph": ph, "notes": notes}
-    if not re.match(pattern,stnum):
+async def insert(request: Request,student : StudentInfo=Depends(StudentInfo.as_form)):
+    if not student.notes:
+        student.notes=""
+    form = {'mode': 'insert', 'stnum': student.stnum, "name": student.name, "grade": student.grade, "ph": student.ph, "notes": student.notes}
+    if not re.match(pattern,student.stnum):
         return templates.TemplateResponse('warning.html',{'request':request,'msg':'빅데이터과나 영상미디어콘텐츠과만 가입이 가능합니다'})
     df=pd.read_excel(sheet)
-    df=df[(df['학번']==stnum)|(df['연락처']==ph)]
+    df=df[(df['학번']==student.stnum)|(df['연락처']==student.ph)]
     if len(df)>0:
         return templates.TemplateResponse('warning.html',{'request':request,'msg':'이미 가입되었습니다'})
     try:   
@@ -99,8 +112,8 @@ async def updateinput(request: Request,stnum:str=Form(...)):
 def getinsert(request: Request):
     return templates.TemplateResponse('warning.html',{'request':request,'msg':'정보를 입력해주세요'})
 @app.post("/update")
-async def update(request: Request,stnum:str=Form(...),name:str=Form(...),grade:int=Form(...),ph:str=Form(...),notes:str=Form("")):
-    form = {'mode': 'update', 'stnum': stnum, "name": name, "grade": grade, "ph": ph, "notes": notes}
+async def update(request: Request,student : StudentInfo=Depends(StudentInfo.as_form)):
+    form = {'mode': 'update', 'stnum': student.stnum, "name": student.name, "grade": student.grade, "ph": student.ph, "notes": student.notes}
     path=""
     try:   
         async with httpx.AsyncClient() as client:
