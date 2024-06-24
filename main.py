@@ -25,8 +25,7 @@ programe=os.getenv('KGCPrograme')
 templates = Jinja2Templates(directory="template")
 
 app=FastAPI()
-app.mount("/js", StaticFiles(directory="js"),name='js')
-app.mount("/css", StaticFiles(directory="css"),name='css')
+app.mount("/mount", StaticFiles(directory="mount"))
 @app.get("/")
 def index():
     return FileResponse('index.html')
