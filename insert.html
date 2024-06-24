@@ -4,8 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="js/btnmanager.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
     <title>가입하기</title>
 </head>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #000;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+
+    form {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #111;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #333;
+    }
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+        border: 1px solid #333;
+    }
+
+    td {
+        background-color: #1b1b1b;
+    }
+
+    h2 {
+        font-size: 1.5em;
+        margin: 0;
+        color: #00ffff;
+        text-align: center;
+        text-shadow: 0 0 10px #00ffff;
+    }
+
+    input[type="text"], input[type="radio"], input[type="checkbox"] {
+        padding: 10px;
+        border: 1px solid #00ffff;
+        border-radius: 5px;
+        background-color: #111;
+        color: #fff;
+        width: calc(100% - 22px);
+    }
+
+    input[type="radio"], input[type="checkbox"] {
+        width: auto;
+    }
+
+    input[type="text"]::placeholder {
+        color: #aaa;
+    }
+
+    button {
+        padding: 10px;
+        border: 1px solid #00ffff;
+        border-radius: 5px;
+        background-color: #00ffff;
+        color: #000;
+        width: 100%;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #00cccc;
+    }
+
+    a {
+        color: #00ffff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+</style>
 <body>
         <form action="/insert" method="post">
             <table border="1" align="center">
@@ -14,18 +99,18 @@
                 </tr>
                 <tr>
                     <td>학번</td>
-                    <td><input name="stnum" required></td>
+                    <td><input name="stnum" type="text" required></td>
                 </tr>
                 <tr>
                     <td>성명</td>
-                    <td><input name="name" required></td>
+                    <td><input name="name" type="text"  required></td>
                 </tr>
                 <tr>
                     <td>학년</td>
                     <td><input type="radio" name="grade" value="1" checked>1학년 <input type="radio" name="grade" value="2">2학년</td></tr>
                     <tr>
                     <td>연락처</td>
-                    <td><input name="ph" required pattern="^010-\d{4}-\d{4}$" placeholder="010-0000-0000"></td>
+                    <td><input name="ph" type="text"  required pattern="^010-\d{4}-\d{4}$" placeholder="010-0000-0000"></td>
                 </tr>
                 <tr>
                     <td>비고</td>
