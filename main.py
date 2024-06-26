@@ -54,12 +54,12 @@ async def insert(request: Request,student : StudentInfo=Depends(StudentInfo.as_f
             msg = html.unescape(msg)
             path="success.html"
     except httpx.RequestError as e:
-        msg = f'Google Sheets에 데이터 추가 중 오류 발생: {e}'
+        msg = f'{e}'
         path="warning.html"
     except httpx.HTTPStatusError as e:
         msg = f'HTTP 오류 발생: {e.response.status_code} {html.unescape(e.response.text)}'
         path="warning.html"
-    return templates.TemplateResponse(path, {'request': request, 'msg': msg})
+    return templates.TemplateResponse(path, {'request': request, 'msg': msg,'insert':True})
 @app.get("/deleteform")
 def delete():
     return FileResponse('delete.html')
@@ -90,7 +90,7 @@ async def delete(request: Request,stnum:str=Form(...)):
     except httpx.HTTPStatusError as e:
         msg = f'HTTP 오류 발생: {e.response.status_code} {html.unescape(e.response.text)}'
         path="warning.html"
-    return templates.TemplateResponse(path, {'request': request, 'msg': msg})
+    return templates.TemplateResponse(path, {'request': request, 'msg': msg,'insert':False})
 @app.get("/updateform")
 def update():
     return FileResponse('update.html')
@@ -128,7 +128,7 @@ async def update(request: Request,student : StudentInfo=Depends(StudentInfo.as_f
     except httpx.HTTPStatusError as e:
         msg = f'HTTP 오류 발생: {e.response.status_code} {html.unescape(e.response.text)}'
         path="warning.html"
-    return templates.TemplateResponse(path,{'request':request,'msg':msg})
+    return templates.TemplateResponse(path,{'request':request,'msg':msg,'insert':False})
 @app.get("/admincheck")
 def admincheck():
     return FileResponse('admincheck.html')
